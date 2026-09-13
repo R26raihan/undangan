@@ -68,6 +68,9 @@
       </div>
     </section>
 
+    <!-- Event Schedule Section (Akad & Resepsi) -->
+    <EventScheduleSection />
+
     <!-- Save The Date & Wedding Gift Section -->
     <GiftAndDateSection @copied="showToast" />
 
@@ -89,6 +92,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import EventScheduleSection from '../components/EventScheduleSection.vue'
 import GiftAndDateSection from '../components/GiftAndDateSection.vue'
 import RsvpSection from '../components/RsvpSection.vue'
 
