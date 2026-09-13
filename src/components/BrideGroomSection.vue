@@ -43,6 +43,17 @@
           <p class="full-name-line">Aris</p>
           <p class="full-name-line">Wanda</p>
         </div>
+
+        <!-- Flower Garden Strip -->
+        <div class="garden-row" aria-hidden="true">
+          <img
+            v-for="n in 5"
+            :key="n"
+            :src="imgTulipSingle"
+            alt=""
+            class="garden-tulip"
+          />
+        </div>
       </div>
 
       <!-- Bride Card (Susi) -->
@@ -80,6 +91,17 @@
         <div class="full-name-block">
           <p class="full-name-line">Susilawati</p>
         </div>
+
+        <!-- Flower Garden Strip -->
+        <div class="garden-row" aria-hidden="true">
+          <img
+            v-for="n in 5"
+            :key="n"
+            :src="imgTulipSingle"
+            alt=""
+            class="garden-tulip"
+          />
+        </div>
       </div>
     </div>
   </section>
@@ -91,6 +113,7 @@ import imgBride from '../assets/bride-cewek.png'
 import imgFlowerGarland from '../assets/flower-garland.webp'
 import imgTulipBouquet from '../assets/tulip-bouquet.webp'
 import imgTulipBouquetPearl from '../assets/tulip-bouquet-pearl.webp'
+import imgTulipSingle from '../assets/tulip-single.webp'
 </script>
 
 <style scoped>
@@ -239,6 +262,33 @@ import imgTulipBouquetPearl from '../assets/tulip-bouquet-pearl.webp'
   transform: rotate(8deg);
 }
 
+/* Flower Garden Strip */
+.garden-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-top: 10px;
+  width: 100%;
+  pointer-events: none;
+}
+
+.garden-tulip {
+  width: 26px;
+  height: auto;
+  margin: 0 -6px;
+  filter: drop-shadow(0 3px 5px rgba(83, 128, 174, 0.15));
+}
+
+.garden-tulip:nth-child(odd) {
+  width: 20px;
+  transform: translateY(5px) rotate(-4deg);
+}
+
+.garden-tulip:nth-child(3n) {
+  width: 32px;
+  transform: rotate(3deg);
+}
+
 /* Full Name */
 .full-name-block {
   min-height: 48px;
@@ -295,6 +345,18 @@ import imgTulipBouquetPearl from '../assets/tulip-bouquet-pearl.webp'
 
   .full-name-line {
     font-size: 17.5px;
+  }
+
+  .garden-tulip {
+    width: 20px;
+  }
+
+  .garden-tulip:nth-child(odd) {
+    width: 16px;
+  }
+
+  .garden-tulip:nth-child(3n) {
+    width: 25px;
   }
 }
 </style>

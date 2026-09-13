@@ -1,5 +1,9 @@
 <template>
-  <section class="ar-rum-section" aria-label="Ayat Suci QS Ar-Rum 21">
+  <section
+    class="ar-rum-section"
+    aria-label="Ayat Suci QS Ar-Rum 21"
+    :style="{ backgroundImage: `url(${imgPaperBg})` }"
+  >
     <img
       :src="imgArRumCard"
       alt="QS Ar-Rum Ayat 21"
@@ -11,17 +15,22 @@
 
 <script setup lang="ts">
 import imgArRumCard from '../assets/ar-rum-card.webp'
+import imgPaperBg from '../assets/paper-bg.png'
 </script>
 
 <style scoped>
 .ar-rum-section {
   width: 100%;
-  max-width: 440px;
-  margin: 0 auto;
-  padding: 0 24px;
+  max-width: 480px;
+  margin: 0 auto 28px;
+  padding: 24px 12px;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 24px;
 }
 
 .ar-rum-image {

@@ -131,8 +131,6 @@ const showToast = (msg: string) => {
 }
 
 onMounted(() => {
-  document.documentElement.classList.add('ivw-snap-scroll')
-
   nextTick(() => {
     observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -159,8 +157,6 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  document.documentElement.classList.remove('ivw-snap-scroll')
-
   if (observer) {
     observer.disconnect()
     observer = null
@@ -300,16 +296,6 @@ onUnmounted(() => {
   padding-top: 18px;
   display: flex;
   flex-direction: column;
-}
-
-.section-block {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 /* Thank you footer */

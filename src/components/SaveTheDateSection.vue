@@ -169,7 +169,7 @@ onUnmounted(() => {
 .save-date-wrapper {
   width: 100%;
   max-width: 440px;
-  margin: 0 auto;
+  margin: 0 auto 28px;
   padding: 0 16px;
 }
 
