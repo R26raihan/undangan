@@ -385,16 +385,15 @@ onMounted(() => {
   margin-top: 2px;
 }
 
-/* Form Card (matches screenshot's rounded white card) */
 .form-card {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
   border-radius: 20px;
   padding: 24px 20px 22px;
   margin-bottom: 24px;
-  box-shadow: 0 6px 20px rgba(83, 128, 174, 0.1);
-  border: 1px solid rgba(196, 226, 248, 0.7);
+  box-shadow: 0 6px 20px rgba(83, 128, 174, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.45);
 }
 
 .card-script-title {

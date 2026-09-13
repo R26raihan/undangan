@@ -68,12 +68,12 @@
           <span class="btn-label">Buka Undangan</span>
         </button>
 
-        <p class="audio-hint">
+        <!-- <p class="audio-hint">
           <svg class="note-mini-icon" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
           </svg>
           Putar lagu otomatis saat dibuka
-        </p>
+        </p> -->
       </footer>
     </div>
   </main>
@@ -114,7 +114,11 @@ const openInvitation = async () => {
   align-items: center;
   justify-content: center;
   padding: 24px 16px;
-  background: linear-gradient(180deg, #c4e2f8 0%, #daf0fe 35%, #edf6fd 70%, #f6faff 100%);
+  background-color: var(--color-bg-page);
+  background-image: url('../assets/bg-landing.webp');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
   color: var(--color-text-navy);
   overflow: hidden;
 }
@@ -199,11 +203,11 @@ const openInvitation = async () => {
   position: relative;
   width: 100%;
   max-width: 440px;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1.5px solid rgba(106, 156, 228, 0.4);
-  box-shadow: 0 20px 50px rgba(49, 133, 242, 0.15), 0 4px 16px rgba(106, 156, 228, 0.12);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 20px 50px rgba(49, 133, 242, 0.18), 0 4px 16px rgba(106, 156, 228, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
   border-radius: 28px;
   padding: 42px 30px 36px;
   text-align: center;

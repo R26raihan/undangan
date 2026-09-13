@@ -367,7 +367,12 @@ onUnmounted(() => {
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
-  background: #edf6fd;
+  background-color: #edf6fd;
+  background-image: url('../assets/bg-main.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   box-shadow: 0 0 50px rgba(49, 133, 242, 0.18);
 }
 

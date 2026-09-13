@@ -131,8 +131,8 @@
 
       <!-- Bank BRI Button -->
       <button class="gift-account-btn btn-bri" @click="copyAccount('041501019453500', 'BRI')">
-        <div class="bank-tag">
-          <span class="bank-name">BBRI</span>
+        <div class="bank-tag bank-tag-logo">
+          <img :src="logoBri" alt="BRI" class="bank-logo" />
         </div>
         <div class="acc-info">
           <span class="acc-number">041501019453500</span>
@@ -143,8 +143,8 @@
 
       <!-- DANA Button -->
       <button class="gift-account-btn btn-dana" @click="copyAccount('041501019453500', 'DANA')">
-        <div class="bank-tag">
-          <span class="bank-name">DANA</span>
+        <div class="bank-tag bank-tag-logo">
+          <img :src="logoDana" alt="DANA" class="bank-logo" />
         </div>
         <div class="acc-info">
           <span class="acc-number">041501019453500</span>
@@ -164,6 +164,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import logoBri from '../assets/logo-bri.svg'
+import logoDana from '../assets/logo-dana.png'
 
 const emit = defineEmits<{
   (e: 'copied', msg: string): void
@@ -235,13 +237,13 @@ onUnmounted(() => {
 }
 
 .elegant-card {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
   border-radius: 20px;
   padding: 26px 20px 22px;
-  box-shadow: 0 6px 20px rgba(83, 128, 174, 0.1);
-  border: 1px solid rgba(196, 226, 248, 0.7);
+  box-shadow: 0 6px 20px rgba(83, 128, 174, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   text-align: center;
 }
 
@@ -449,6 +451,21 @@ onUnmounted(() => {
   font-weight: 800;
   font-size: 14px;
   letter-spacing: 0.5px;
+}
+
+.bank-tag-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+.bank-logo {
+  height: 16px;
+  width: auto;
+  display: block;
 }
 
 .acc-info {

@@ -53,16 +53,18 @@
         <p class="loader-text">Memuat Undangan Susi &amp; Aris...</p>
       </div>
 
-      <div class="canva-wrapper">
-        <iframe
-          ref="canvaIframe"
-          :src="canvaEmbedUrl"
-          loading="lazy"
-          allowfullscreen
-          allow="fullscreen"
-          title="Susi &amp; Aris Wedding Invitation"
-          @load="onIframeLoaded"
-        ></iframe>
+      <div class="canva-frame">
+        <div class="canva-wrapper">
+          <iframe
+            ref="canvaIframe"
+            :src="canvaEmbedUrl"
+            loading="lazy"
+            allowfullscreen
+            allow="fullscreen"
+            title="Susi &amp; Aris Wedding Invitation"
+            @load="onIframeLoaded"
+          ></iframe>
+        </div>
       </div>
     </section>
 
@@ -129,13 +131,15 @@ const showToast = (msg: string) => {
 
 <style scoped>
 .invitation-page {
+  position: relative;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--color-bg-page);
+  background: transparent;
   color: var(--color-text-navy);
   padding-bottom: 50px;
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -143,11 +147,11 @@ const showToast = (msg: string) => {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(106, 156, 228, 0.3);
-  box-shadow: 0 2px 10px rgba(49, 133, 242, 0.06);
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 10px rgba(49, 133, 242, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5);
   padding: 10px 16px;
 }
 
@@ -296,18 +300,26 @@ const showToast = (msg: string) => {
   margin: 0;
 }
 
+.canva-frame {
+  width: 100%;
+  padding: 10px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 16px 40px rgba(49, 133, 242, 0.14), 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
 .canva-wrapper {
   position: relative;
   width: 100%;
   height: 0;
   padding-top: 607.2474%;
+  margin: 0 auto;
   overflow: hidden;
-  border-radius: 16px;
-  box-shadow: 0 16px 40px rgba(49, 133, 242, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(106, 156, 228, 0.35);
+  border-radius: 14px;
+  background: #ffffff;
 }
 
 .canva-wrapper iframe {
@@ -332,13 +344,13 @@ const showToast = (msg: string) => {
 .thank-you-box {
   max-width: 440px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
   border-radius: 20px;
   padding: 28px 20px 20px;
-  border: 1px solid rgba(196, 226, 248, 0.7);
-  box-shadow: 0 6px 20px rgba(83, 128, 174, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 6px 20px rgba(83, 128, 174, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .thank-you-title {
@@ -389,6 +401,11 @@ const showToast = (msg: string) => {
 
   .canva-stage {
     padding: 8px 6px 20px;
+  }
+
+  .canva-frame {
+    padding: 6px;
+    border-radius: 18px;
   }
 
   .canva-wrapper {
