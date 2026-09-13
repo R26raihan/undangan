@@ -46,36 +46,16 @@
       </div>
     </transition>
 
-    <!-- Invitation Visual Presentation -->
-    <section class="canva-stage" aria-label="Desain Undangan Pernikahan">
-      <div v-if="isLoading" class="loader-overlay" aria-live="polite">
-        <div class="loader-spinner"></div>
-        <p class="loader-text">Memuat Undangan Susi &amp; Aris...</p>
-      </div>
+    <div class="invitation-content">
+      <!-- Event Schedule Section (Akad & Resepsi) -->
+      <EventScheduleSection />
 
-      <div class="canva-frame">
-        <div class="canva-wrapper">
-          <iframe
-            ref="canvaIframe"
-            :src="canvaEmbedUrl"
-            loading="lazy"
-            allowfullscreen
-            allow="fullscreen"
-            title="Susi &amp; Aris Wedding Invitation"
-            @load="onIframeLoaded"
-          ></iframe>
-        </div>
-      </div>
-    </section>
+      <!-- Save The Date & Wedding Gift Section -->
+      <GiftAndDateSection @copied="showToast" />
 
-    <!-- Event Schedule Section (Akad & Resepsi) -->
-    <EventScheduleSection />
-
-    <!-- Save The Date & Wedding Gift Section -->
-    <GiftAndDateSection @copied="showToast" />
-
-    <!-- RSVP & Buku Tamu & Wedding Wishes -->
-    <RsvpSection />
+      <!-- RSVP & Buku Tamu & Wedding Wishes -->
+      <RsvpSection />
+    </div>
 
     <!-- Thank You Section -->
     <footer class="thank-you-footer">
@@ -99,14 +79,7 @@ import RsvpSection from '../components/RsvpSection.vue'
 const router = useRouter()
 const route = useRoute()
 
-const canvaEmbedUrl = 'https://www.canva.com/design/DAHVCsgsHkM/Hl20CibB1IyQXbp0ZgOhCg/view?embed'
-
-const isLoading = ref(true)
 const toastMessage = ref('')
-
-const onIframeLoaded = () => {
-  isLoading.value = false
-}
 
 const goBack = () => {
   router.push({
@@ -260,82 +233,11 @@ const showToast = (msg: string) => {
   transform: translate(-50%, -10px);
 }
 
-/* Stage */
-.canva-stage {
-  position: relative;
+.invitation-content {
   width: 100%;
-  max-width: 860px;
-  margin: 0 auto;
+  padding-top: 18px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 12px 12px 24px;
-}
-
-.loader-overlay {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  z-index: 5;
-}
-
-.loader-spinner {
-  width: 38px;
-  height: 38px;
-  border: 3px solid rgba(106, 156, 228, 0.25);
-  border-top-color: var(--color-blue-primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.loader-text {
-  font-size: 13px;
-  color: var(--color-text-muted);
-  font-style: italic;
-  margin: 0;
-}
-
-.canva-frame {
-  width: 100%;
-  padding: 10px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 16px 40px rgba(49, 133, 242, 0.14), 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-.canva-wrapper {
-  position: relative;
-  width: 100%;
-  height: 0;
-  padding-top: 607.2474%;
-  margin: 0 auto;
-  overflow: hidden;
-  border-radius: 14px;
-  background: #ffffff;
-}
-
-.canva-wrapper iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-  padding: 0;
-  margin: 0;
-  display: block;
 }
 
 /* Thank you footer */
@@ -401,19 +303,6 @@ const showToast = (msg: string) => {
 
   .brand-title {
     font-size: 13px;
-  }
-
-  .canva-stage {
-    padding: 8px 6px 20px;
-  }
-
-  .canva-frame {
-    padding: 6px;
-    border-radius: 18px;
-  }
-
-  .canva-wrapper {
-    border-radius: 12px;
   }
 }
 </style>
