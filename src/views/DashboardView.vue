@@ -142,7 +142,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { db } from '../service/firebase'
-import { collection, onSnapshot, query, orderBy, addDoc, deleteDoc, doc, serverTimestamp, type Timestamp } from 'firebase/firestore'
+import { collection, onSnapshot, query, orderBy, addDoc, deleteDoc, doc, setDoc, increment, serverTimestamp, type Timestamp } from 'firebase/firestore'
 
 const GUESTS_COLLECTION = 'guests_susiaris'
 const WISHES_COLLECTION = 'wishes_susiaris'
@@ -255,8 +255,21 @@ onUnmounted(() => {
 })
 
 const removeRsvp = async (id: string) => {
+  const item = rsvpList.value.find((r) => r.id === id)
   if (!confirm('Hapus data RSVP ini?')) return
   await deleteDoc(doc(db, GUESTS_COLLECTION, id))
+
+  if (item) {
+    try {
+      const summaryRef = doc(db, 'metadata_susiaris', 'summary')
+      await setDoc(summaryRef, {
+        totalHadir: item.attendance === 'hadir' ? increment(-(item.guests || 1)) : increment(0),
+        totalTidakHadir: item.attendance === 'tidak_hadir' ? increment(-1) : increment(0)
+      }, { merge: true })
+    } catch (e) {
+      console.error('Error syncing summary after delete:', e)
+    }
+  }
 }
 
 const removeWish = async (id: string) => {

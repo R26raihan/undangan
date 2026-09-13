@@ -144,6 +144,18 @@
           </div>
           <p class="wish-text">{{ item.message }}</p>
         </div>
+
+        <div v-if="hasMoreWishes" class="load-more-wrapper">
+          <button
+            type="button"
+            class="btn-load-more"
+            :disabled="isLoadingMoreWishes"
+            @click="loadMoreWishes"
+          >
+            <span v-if="!isLoadingMoreWishes">Muat Lebih Banyak Ucapan</span>
+            <span v-else>Memuat ucapan...</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -160,24 +172,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { db } from '../service/firebase'
-import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, type Timestamp } from 'firebase/firestore'
+import {
+  collection,
+  addDoc,
+  getDocs,
+  getDoc,
+  setDoc,
+  doc,
+  query,
+  orderBy,
+  limit,
+  startAfter,
+  serverTimestamp,
+  increment,
+  getCountFromServer,
+  where,
+  type QueryDocumentSnapshot,
+  type DocumentData,
+  type Timestamp
+} from 'firebase/firestore'
 
 const route = useRoute()
 
 const GUESTS_COLLECTION = 'guests_susiaris'
 const WISHES_COLLECTION = 'wishes_susiaris'
-
-interface RsvpItem {
-  id: string
-  name: string
-  phone: string
-  guests: number
-  attendance: 'hadir' | 'tidak_hadir'
-  date: string
-}
+const METADATA_COLLECTION = 'metadata_susiaris'
+const METADATA_DOC = 'summary'
+const WISHES_LIMIT = 15
 
 interface WishItem {
   id: string
@@ -186,8 +210,12 @@ interface WishItem {
   date: string
 }
 
-const rsvpList = ref<RsvpItem[]>([])
+const totalHadir = ref(0)
+const totalTidakHadir = ref(0)
 const wishesList = ref<WishItem[]>([])
+const hasMoreWishes = ref(false)
+const isLoadingMoreWishes = ref(false)
+let lastWishDoc: QueryDocumentSnapshot<DocumentData> | null = null
 
 const formRsvp = ref({
   name: '',
@@ -204,16 +232,6 @@ const formWish = ref({
 const isSubmittingRsvp = ref(false)
 const isSubmittingWish = ref(false)
 const toastText = ref('')
-
-const totalHadir = computed(() => {
-  return rsvpList.value
-    .filter(item => item.attendance === 'hadir')
-    .reduce((sum, item) => sum + (Number(item.guests) || 1), 0)
-})
-
-const totalTidakHadir = computed(() => {
-  return rsvpList.value.filter(item => item.attendance === 'tidak_hadir').length
-})
 
 const showToast = (msg: string) => {
   toastText.value = msg
@@ -233,37 +251,136 @@ const formatDate = (createdAt: Timestamp | null | undefined) => {
   })
 }
 
-let unsubscribeGuests: (() => void) | null = null
-let unsubscribeWishes: (() => void) | null = null
-
-const subscribeToData = () => {
-  const guestsQ = query(collection(db, GUESTS_COLLECTION), orderBy('createdAt', 'desc'))
-  unsubscribeGuests = onSnapshot(guestsQ, (snapshot) => {
-    rsvpList.value = snapshot.docs.map((docSnap) => {
-      const data = docSnap.data()
-      return {
-        id: docSnap.id,
-        name: data.name || '',
-        phone: data.phone || '',
-        guests: data.guests || 1,
-        attendance: data.attendance || 'hadir',
-        date: formatDate(data.createdAt)
+// 1. Fetch lightweight summary stats (Consumes only 1 read or 0 from cache)
+const loadRsvpStats = async () => {
+  try {
+    const cachedStats = sessionStorage.getItem('rsvp_stats_cache')
+    if (cachedStats) {
+      const parsed = JSON.parse(cachedStats)
+      if (Date.now() - parsed.timestamp < 180000) { // 3 minutes cache
+        totalHadir.value = parsed.hadir || 0
+        totalTidakHadir.value = parsed.tidakHadir || 0
+        return
       }
-    })
-  })
+    }
 
-  const wishesQ = query(collection(db, WISHES_COLLECTION), orderBy('createdAt', 'desc'))
-  unsubscribeWishes = onSnapshot(wishesQ, (snapshot) => {
-    wishesList.value = snapshot.docs.map((docSnap) => {
-      const data = docSnap.data()
-      return {
-        id: docSnap.id,
-        name: data.name || '',
-        message: data.message || '',
-        date: formatDate(data.createdAt)
+    const summaryRef = doc(db, METADATA_COLLECTION, METADATA_DOC)
+    const summarySnap = await getDoc(summaryRef)
+
+    if (summarySnap.exists()) {
+      const data = summarySnap.data()
+      totalHadir.value = data.totalHadir || 0
+      totalTidakHadir.value = data.totalTidakHadir || 0
+    } else {
+      // Fallback first run: count from server (1 read per 1,000 entries)
+      const hadirQ = query(collection(db, GUESTS_COLLECTION), where('attendance', '==', 'hadir'))
+      const tidakQ = query(collection(db, GUESTS_COLLECTION), where('attendance', '==', 'tidak_hadir'))
+      const [snapHadir, snapTidak] = await Promise.all([
+        getCountFromServer(hadirQ),
+        getCountFromServer(tidakQ)
+      ])
+
+      totalHadir.value = snapHadir.data().count
+      totalTidakHadir.value = snapTidak.data().count
+
+      // Store summary so future guests only trigger 1 read
+      await setDoc(summaryRef, {
+        totalHadir: totalHadir.value,
+        totalTidakHadir: totalTidakHadir.value
+      }, { merge: true })
+    }
+
+    sessionStorage.setItem('rsvp_stats_cache', JSON.stringify({
+      hadir: totalHadir.value,
+      tidakHadir: totalTidakHadir.value,
+      timestamp: Date.now()
+    }))
+  } catch (err) {
+    console.error('Error fetching RSVP stats:', err)
+  }
+}
+
+// 2. Fetch Wishes with limit (Consumes only 15 reads max)
+const loadWishes = async () => {
+  try {
+    const cachedWishes = sessionStorage.getItem('wishes_cache')
+    if (cachedWishes) {
+      const parsed = JSON.parse(cachedWishes)
+      if (Date.now() - parsed.timestamp < 180000) { // 3 minutes cache
+        wishesList.value = parsed.items || []
+        hasMoreWishes.value = parsed.hasMore || false
+        return
       }
-    })
-  })
+    }
+
+    const wishesQ = query(
+      collection(db, WISHES_COLLECTION),
+      orderBy('createdAt', 'desc'),
+      limit(WISHES_LIMIT)
+    )
+    const snapshot = await getDocs(wishesQ)
+
+    if (!snapshot.empty) {
+      lastWishDoc = snapshot.docs[snapshot.docs.length - 1]
+      hasMoreWishes.value = snapshot.docs.length === WISHES_LIMIT
+
+      wishesList.value = snapshot.docs.map((docSnap) => {
+        const data = docSnap.data()
+        return {
+          id: docSnap.id,
+          name: data.name || '',
+          message: data.message || '',
+          date: formatDate(data.createdAt)
+        }
+      })
+
+      sessionStorage.setItem('wishes_cache', JSON.stringify({
+        items: wishesList.value,
+        hasMore: hasMoreWishes.value,
+        timestamp: Date.now()
+      }))
+    }
+  } catch (err) {
+    console.error('Error fetching wishes:', err)
+  }
+}
+
+// 3. Load more wishes on-demand
+const loadMoreWishes = async () => {
+  if (!lastWishDoc || isLoadingMoreWishes.value) return
+  isLoadingMoreWishes.value = true
+
+  try {
+    const nextQ = query(
+      collection(db, WISHES_COLLECTION),
+      orderBy('createdAt', 'desc'),
+      startAfter(lastWishDoc),
+      limit(WISHES_LIMIT)
+    )
+    const snapshot = await getDocs(nextQ)
+
+    if (!snapshot.empty) {
+      lastWishDoc = snapshot.docs[snapshot.docs.length - 1]
+      hasMoreWishes.value = snapshot.docs.length === WISHES_LIMIT
+
+      const newItems = snapshot.docs.map((docSnap) => {
+        const data = docSnap.data()
+        return {
+          id: docSnap.id,
+          name: data.name || '',
+          message: data.message || '',
+          date: formatDate(data.createdAt)
+        }
+      })
+      wishesList.value.push(...newItems)
+    } else {
+      hasMoreWishes.value = false
+    }
+  } catch (err) {
+    console.error('Error loading more wishes:', err)
+  } finally {
+    isLoadingMoreWishes.value = false
+  }
 }
 
 const loadGuestName = () => {
@@ -278,14 +395,38 @@ const submitRsvp = async () => {
   if (!formRsvp.value.name || !formRsvp.value.attendance) return
   isSubmittingRsvp.value = true
 
+  const attendance = formRsvp.value.attendance
+  const guestsCount = Number(formRsvp.value.guests) || 1
+
   try {
+    // 1. Add individual RSVP document
     await addDoc(collection(db, GUESTS_COLLECTION), {
       name: formRsvp.value.name.trim(),
       phone: formRsvp.value.phone.trim(),
-      guests: formRsvp.value.guests || 1,
-      attendance: formRsvp.value.attendance,
+      guests: guestsCount,
+      attendance,
       createdAt: serverTimestamp()
     })
+
+    // 2. Atomic counter increment in metadata summary (avoids reading full collection)
+    const summaryRef = doc(db, METADATA_COLLECTION, METADATA_DOC)
+    await setDoc(summaryRef, {
+      totalHadir: attendance === 'hadir' ? increment(guestsCount) : increment(0),
+      totalTidakHadir: attendance === 'tidak_hadir' ? increment(1) : increment(0)
+    }, { merge: true })
+
+    // 3. Update local state immediately (0 reads)
+    if (attendance === 'hadir') {
+      totalHadir.value += guestsCount
+    } else {
+      totalTidakHadir.value += 1
+    }
+
+    sessionStorage.setItem('rsvp_stats_cache', JSON.stringify({
+      hadir: totalHadir.value,
+      tidakHadir: totalTidakHadir.value,
+      timestamp: Date.now()
+    }))
 
     showToast('Terima kasih, konfirmasi kehadiran berhasil dikirim!')
     formRsvp.value.phone = ''
@@ -302,12 +443,29 @@ const submitWish = async () => {
   if (!formWish.value.name || !formWish.value.message.trim()) return
   isSubmittingWish.value = true
 
+  const wishName = formWish.value.name.trim()
+  const wishMessage = formWish.value.message.trim()
+
   try {
-    await addDoc(collection(db, WISHES_COLLECTION), {
-      name: formWish.value.name.trim(),
-      message: formWish.value.message.trim(),
+    const docRef = await addDoc(collection(db, WISHES_COLLECTION), {
+      name: wishName,
+      message: wishMessage,
       createdAt: serverTimestamp()
     })
+
+    // Prepend immediately to local list so user sees it right away (0 reads)
+    wishesList.value.unshift({
+      id: docRef.id,
+      name: wishName,
+      message: wishMessage,
+      date: 'Baru saja'
+    })
+
+    sessionStorage.setItem('wishes_cache', JSON.stringify({
+      items: wishesList.value,
+      hasMore: hasMoreWishes.value,
+      timestamp: Date.now()
+    }))
 
     showToast('Doa & ucapan Anda berhasil terkirim!')
     formWish.value.message = ''
@@ -320,13 +478,9 @@ const submitWish = async () => {
 }
 
 onMounted(() => {
-  subscribeToData()
+  loadRsvpStats()
+  loadWishes()
   loadGuestName()
-})
-
-onUnmounted(() => {
-  if (unsubscribeGuests) unsubscribeGuests()
-  if (unsubscribeWishes) unsubscribeWishes()
 })
 </script>
 
@@ -598,6 +752,38 @@ onUnmounted(() => {
   line-height: 1.5;
   color: #2c4970;
   margin: 0;
+}
+
+/* Load More Button */
+.load-more-wrapper {
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-load-more {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--color-blue-soft);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--color-text-navy);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(83, 128, 174, 0.08);
+}
+
+.btn-load-more:hover:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: #ffffff;
+  border-color: var(--color-blue-primary);
+  transform: translateY(-1px);
+}
+
+.btn-load-more:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Toast */
