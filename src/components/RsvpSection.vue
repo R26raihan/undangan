@@ -150,10 +150,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { db } from '../service/firebase'
+import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, type Timestamp } from 'firebase/firestore'
 
 const route = useRoute()
+
+const GUESTS_COLLECTION = 'guests_susiaris'
+const WISHES_COLLECTION = 'wishes_susiaris'
 
 interface RsvpItem {
   id: string
@@ -207,43 +212,51 @@ const showToast = (msg: string) => {
   }, 3200)
 }
 
-const loadData = () => {
-  try {
-    const savedRsvp = localStorage.getItem('wedding_rsvp_records')
-    if (savedRsvp) {
-      rsvpList.value = JSON.parse(savedRsvp)
-    } else {
-      // Default sample records
-      rsvpList.value = [
-        { id: '1', name: 'Keluarga Budi Santoso', phone: '08123456789', guests: 2, attendance: 'hadir', date: 'Hari ini' },
-        { id: '2', name: 'Rahmat & Pasangan', phone: '08987654321', guests: 2, attendance: 'hadir', date: 'Kemarin' },
-      ]
-    }
+const formatDate = (createdAt: Timestamp | null | undefined) => {
+  if (!createdAt) return 'Baru saja'
+  return createdAt.toDate().toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
 
-    const savedWishes = localStorage.getItem('wedding_wishes_records')
-    if (savedWishes) {
-      wishesList.value = JSON.parse(savedWishes)
-    } else {
-      wishesList.value = [
-        {
-          id: 'w1',
-          name: 'Sarah & Danang',
-          message: 'Selamat berbahagia Susi & Aris! Semoga menjadi keluarga yang sakinah, mawaddah, wa rahmah. Aamiin.',
-          date: 'Hari ini'
-        },
-        {
-          id: 'w2',
-          name: 'Dimas Kurniawan',
-          message: 'Barakallahu lakum wa baraka alaikum wa jama\'a bainakuma fii khair. Selamat menempuh hidup baru!',
-          date: 'Kemarin'
-        }
-      ]
-    }
-  } catch (err) {
-    console.error(err)
-  }
+let unsubscribeGuests: (() => void) | null = null
+let unsubscribeWishes: (() => void) | null = null
 
-  // Auto pre-fill guest name from URL if available
+const subscribeToData = () => {
+  const guestsQ = query(collection(db, GUESTS_COLLECTION), orderBy('createdAt', 'desc'))
+  unsubscribeGuests = onSnapshot(guestsQ, (snapshot) => {
+    rsvpList.value = snapshot.docs.map((docSnap) => {
+      const data = docSnap.data()
+      return {
+        id: docSnap.id,
+        name: data.name || '',
+        phone: data.phone || '',
+        guests: data.guests || 1,
+        attendance: data.attendance || 'hadir',
+        date: formatDate(data.createdAt)
+      }
+    })
+  })
+
+  const wishesQ = query(collection(db, WISHES_COLLECTION), orderBy('createdAt', 'desc'))
+  unsubscribeWishes = onSnapshot(wishesQ, (snapshot) => {
+    wishesList.value = snapshot.docs.map((docSnap) => {
+      const data = docSnap.data()
+      return {
+        id: docSnap.id,
+        name: data.name || '',
+        message: data.message || '',
+        date: formatDate(data.createdAt)
+      }
+    })
+  })
+}
+
+const loadGuestName = () => {
   const queryGuest = route.query.to || route.query.u || route.query.guest || route.query.nama
   if (typeof queryGuest === 'string' && queryGuest.trim().length > 0) {
     if (!formRsvp.value.name) formRsvp.value.name = queryGuest.trim()
@@ -251,53 +264,59 @@ const loadData = () => {
   }
 }
 
-const submitRsvp = () => {
+const submitRsvp = async () => {
   if (!formRsvp.value.name || !formRsvp.value.attendance) return
   isSubmittingRsvp.value = true
 
-  setTimeout(() => {
-    const newItem: RsvpItem = {
-      id: Date.now().toString(),
+  try {
+    await addDoc(collection(db, GUESTS_COLLECTION), {
       name: formRsvp.value.name.trim(),
       phone: formRsvp.value.phone.trim(),
       guests: formRsvp.value.guests || 1,
-      attendance: formRsvp.value.attendance as 'hadir' | 'tidak_hadir',
-      date: 'Baru saja'
-    }
-
-    rsvpList.value.unshift(newItem)
-    localStorage.setItem('wedding_rsvp_records', JSON.stringify(rsvpList.value))
+      attendance: formRsvp.value.attendance,
+      createdAt: serverTimestamp()
+    })
 
     showToast('Terima kasih, konfirmasi kehadiran berhasil dikirim!')
     formRsvp.value.phone = ''
     formRsvp.value.attendance = ''
+  } catch (err) {
+    console.error(err)
+    showToast('Gagal mengirim konfirmasi. Silakan coba lagi.')
+  } finally {
     isSubmittingRsvp.value = false
-  }, 400)
+  }
 }
 
-const submitWish = () => {
+const submitWish = async () => {
   if (!formWish.value.name || !formWish.value.message.trim()) return
   isSubmittingWish.value = true
 
-  setTimeout(() => {
-    const newWish: WishItem = {
-      id: Date.now().toString(),
+  try {
+    await addDoc(collection(db, WISHES_COLLECTION), {
       name: formWish.value.name.trim(),
       message: formWish.value.message.trim(),
-      date: 'Baru saja'
-    }
-
-    wishesList.value.unshift(newWish)
-    localStorage.setItem('wedding_wishes_records', JSON.stringify(wishesList.value))
+      createdAt: serverTimestamp()
+    })
 
     showToast('Doa & ucapan Anda berhasil terkirim!')
     formWish.value.message = ''
+  } catch (err) {
+    console.error(err)
+    showToast('Gagal mengirim ucapan. Silakan coba lagi.')
+  } finally {
     isSubmittingWish.value = false
-  }, 400)
+  }
 }
 
 onMounted(() => {
-  loadData()
+  subscribeToData()
+  loadGuestName()
+})
+
+onUnmounted(() => {
+  if (unsubscribeGuests) unsubscribeGuests()
+  if (unsubscribeWishes) unsubscribeWishes()
 })
 </script>
 
