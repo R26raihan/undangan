@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CoverView from '../views/CoverView.vue'
 import VideoCoverView from '../views/VideoCoverView.vue'
+import OpeningTransitionView from '../views/OpeningTransitionView.vue'
 import InvitationView from '../views/InvitationView.vue'
 import DashboardView from '../views/DashboardView.vue'
 
@@ -14,6 +15,11 @@ const routes = [
     path: '/cover-lama',
     name: 'CoverLama',
     component: CoverView,
+  },
+  {
+    path: '/opening',
+    name: 'OpeningTransition',
+    component: OpeningTransitionView,
   },
   {
     path: '/invitation',

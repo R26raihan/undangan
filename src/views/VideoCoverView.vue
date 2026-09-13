@@ -57,7 +57,7 @@ const guestName = computed(() => {
 const openInvitation = async () => {
   await play()
   router.push({
-    path: '/invitation',
+    path: '/opening',
     query: route.query
   })
 }

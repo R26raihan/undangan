@@ -267,7 +267,7 @@ const copyAccount = async (number: string, bank: string) => {
   }
 }
 
-const googleCalendarUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=The+Wedding+of+Susi+%26+Aris&dates=20260920T010000Z/20260920T080000Z&details=The+Wedding+of+Susi+%26+Aris+Wedding+Invitation&location=Indonesia'
+const googleCalendarUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=The+Wedding+of+Susi+%26+Aris&dates=20260920T010000Z/20260920T080000Z&details=The+Wedding+of+Susi+%26+Aris+Wedding+Invitation&location=Kediaman+Mempelai+Wanita,+Sipayung,+Bogor'
 
 onMounted(() => {
   updateCountdown()

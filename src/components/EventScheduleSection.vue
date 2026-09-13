@@ -14,12 +14,19 @@
         <div class="month-year-label">September, 2026</div>
         <div class="divider-wide"></div>
 
-        <div class="location-pin-wrap">
+        <a
+          :href="locationUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="location-pin-wrap"
+          title="Buka Google Maps"
+          aria-label="Petunjuk Lokasi di Google Maps"
+        >
           <svg class="pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M12 21c4-4.5 7-8.5 7-12A7 7 0 0 0 5 9c0 3.5 3 7.5 7 12Z" />
             <circle cx="12" cy="9" r="2.5" stroke-width="1.3" />
           </svg>
-        </div>
+        </a>
 
         <div class="venue-name">Kediaman Mempelai Wanita</div>
         <div class="venue-detail">(Sipayung, Bogor)</div>
@@ -43,12 +50,19 @@
         <div class="month-year-label">September, 2026</div>
         <div class="divider-wide"></div>
 
-        <div class="location-pin-wrap">
+        <a
+          :href="locationUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="location-pin-wrap"
+          title="Buka Google Maps"
+          aria-label="Petunjuk Lokasi di Google Maps"
+        >
           <svg class="pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M12 21c4-4.5 7-8.5 7-12A7 7 0 0 0 5 9c0 3.5 3 7.5 7 12Z" />
             <circle cx="12" cy="9" r="2.5" stroke-width="1.3" />
           </svg>
-        </div>
+        </a>
 
         <div class="venue-name">Kediaman Mempelai Wanita</div>
         <div class="venue-detail">(Sipayung, Bogor)</div>
@@ -75,7 +89,7 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-  locationUrl: 'https://maps.google.com/?q=Sipayung,+Bogor'
+  locationUrl: 'https://maps.app.goo.gl/HAEAqg9zyXMFJ1Ug6?g_st=ic'
 })
 </script>
 
