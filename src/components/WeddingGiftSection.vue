@@ -127,9 +127,9 @@ const copyAccount = async (number: string, bank: string) => {
 }
 
 .elegant-card {
-  background: rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   border-radius: 20px;
   padding: 26px 20px 22px;
   box-shadow: 0 6px 20px rgba(83, 128, 174, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);

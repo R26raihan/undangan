@@ -542,9 +542,9 @@ onMounted(() => {
   gap: 4px;
   padding: 18px 10px 16px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.55);
   box-shadow: 0 6px 18px rgba(49, 133, 242, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
@@ -599,9 +599,9 @@ onMounted(() => {
 }
 
 .form-card {
-  background: rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   border-radius: 20px;
   padding: 24px 20px 22px;
   margin-bottom: 24px;

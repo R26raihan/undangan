@@ -111,9 +111,9 @@ withDefaults(defineProps<Props>(), {
 
 .event-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   border-radius: 36px;
   border: 1px solid rgba(255, 255, 255, 0.45);
   box-shadow: 0 10px 28px rgba(83, 128, 174, 0.12), 0 2px 6px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.5);

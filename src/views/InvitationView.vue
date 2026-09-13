@@ -182,9 +182,9 @@ onUnmounted(() => {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 2px 10px rgba(49, 133, 242, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5);
   padding: 10px 16px;
@@ -308,9 +308,9 @@ onUnmounted(() => {
 .thank-you-box {
   max-width: 440px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   border-radius: 20px;
   padding: 28px 20px 20px;
   border: 1px solid rgba(255, 255, 255, 0.45);
