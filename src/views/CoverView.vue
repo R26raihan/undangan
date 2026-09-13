@@ -1,21 +1,26 @@
 <template>
   <main class="cover-wrapper">
-    <!-- Ambient Background Effects -->
-    <div class="ambient-glow glow-1"></div>
-    <div class="ambient-glow glow-2"></div>
-    <div class="ambient-stars">
-      <span v-for="n in 12" :key="n" :class="`star star-${n}`"></span>
+    <!-- Ambient Sky & Cloud Highlights -->
+    <div class="sky-clouds cloud-1"></div>
+    <div class="sky-clouds cloud-2"></div>
+
+    <!-- Floating Blue Sakura Petals -->
+    <div class="petals-container" aria-hidden="true">
+      <span v-for="n in 14" :key="n" :class="`petal petal-${n}`"></span>
     </div>
 
+    <!-- Central Hero Cover Card -->
     <div class="cover-card">
-      <!-- Decorative Frame Header -->
+      <!-- Decorative Header -->
       <header class="wedding-header">
         <div class="ornament-top">
-          <svg class="floral-svg" viewBox="0 0 120 28" fill="none">
-            <path d="M60 4C45 4 35 18 10 18M60 4C75 4 85 18 110 18" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-            <circle cx="60" cy="4" r="3" fill="currentColor"/>
-            <circle cx="50" cy="8" r="1.5" fill="currentColor"/>
-            <circle cx="70" cy="8" r="1.5" fill="currentColor"/>
+          <svg class="floral-svg" viewBox="0 0 140 28" fill="none">
+            <path d="M70 4C55 4 45 18 15 18M70 4C85 4 95 18 125 18" stroke="#6a9ce4" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="70" cy="4" r="3.5" fill="#3185f2"/>
+            <circle cx="60" cy="8" r="2" fill="#6a9ce4"/>
+            <circle cx="80" cy="8" r="2" fill="#6a9ce4"/>
+            <circle cx="50" cy="12" r="1.5" fill="#c4e2f8"/>
+            <circle cx="90" cy="12" r="1.5" fill="#c4e2f8"/>
           </svg>
         </div>
 
@@ -45,7 +50,7 @@
         <p class="guest-salutation">Kepada Yth. Bapak/Ibu/Saudara/i:</p>
         <h2 class="guest-name">{{ guestName }}</h2>
         <p class="guest-note">
-          Tanpa mengurangi rasa hormat, kami bermaksud mengundang Anda untuk merayakan hari istimewa kami.
+          Tanpa mengurangi rasa hormat, kami mengundang Anda untuk merayakan momen bahagia kami.
         </p>
       </section>
 
@@ -92,10 +97,7 @@ const guestName = computed(() => {
 })
 
 const openInvitation = async () => {
-  // Start music on user interaction
   await play()
-
-  // Navigate to invitation view with preserved query parameters
   router.push({
     path: '/invitation',
     query: route.query
@@ -112,69 +114,84 @@ const openInvitation = async () => {
   align-items: center;
   justify-content: center;
   padding: 24px 16px;
-  background: radial-gradient(circle at center, #1c2638 0%, #0d141e 100%);
-  color: #f5f5f7;
+  background: linear-gradient(180deg, #c4e2f8 0%, #daf0fe 35%, #edf6fd 70%, #f6faff 100%);
+  color: var(--color-text-navy);
   overflow: hidden;
 }
 
-/* Ambient glow blobs */
-.ambient-glow {
+/* Sky clouds ambient effect */
+.sky-clouds {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
+  filter: blur(80px);
   pointer-events: none;
-  opacity: 0.35;
+  opacity: 0.6;
 }
 
-.glow-1 {
+.cloud-1 {
   top: -10%;
-  left: 20%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, #e2be75 0%, rgba(226, 190, 117, 0) 70%);
+  left: 10%;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, #ffffff 0%, rgba(255, 255, 255, 0) 70%);
 }
 
-.glow-2 {
-  bottom: -10%;
-  right: 15%;
-  width: 450px;
-  height: 450px;
-  background: radial-gradient(circle, #83673b 0%, rgba(131, 103, 59, 0) 70%);
+.cloud-2 {
+  bottom: -5%;
+  right: 10%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, var(--color-blue-light) 0%, rgba(196, 226, 248, 0) 70%);
 }
 
-/* Subtle twinkling stars */
-.ambient-stars {
+/* Floating Blue Sakura Petals */
+.petals-container {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  overflow: hidden;
 }
 
-.star {
+.petal {
   position: absolute;
-  width: 2px;
-  height: 2px;
-  background: #f7e7c4;
-  border-radius: 50%;
-  opacity: 0.4;
-  animation: pulseStar 3s ease-in-out infinite;
+  background: radial-gradient(ellipse at center, var(--color-blue-soft) 0%, var(--color-blue-light) 60%, rgba(255, 255, 255, 0.4) 100%);
+  border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
+  opacity: 0.55;
+  animation: fallPetal 12s linear infinite;
 }
 
-.star-1 { top: 12%; left: 15%; animation-delay: 0.2s; }
-.star-2 { top: 25%; left: 80%; animation-delay: 0.8s; }
-.star-3 { top: 40%; left: 10%; animation-delay: 1.4s; }
-.star-4 { top: 75%; left: 22%; animation-delay: 0.5s; }
-.star-5 { top: 85%; left: 78%; animation-delay: 1.1s; }
-.star-6 { top: 60%; left: 88%; animation-delay: 1.9s; }
-.star-7 { top: 18%; left: 45%; animation-delay: 0.4s; }
-.star-8 { top: 88%; left: 50%; animation-delay: 1.7s; }
-.star-9 { top: 32%; left: 92%; animation-delay: 2.1s; }
-.star-10 { top: 68%; left: 8%; animation-delay: 1.3s; }
-.star-11 { top: 5%; left: 70%; animation-delay: 0.9s; }
-.star-12 { top: 52%; left: 3%; animation-delay: 2.5s; }
+.petal-1 { width: 14px; height: 18px; left: 8%; animation-duration: 11s; animation-delay: 0s; }
+.petal-2 { width: 10px; height: 14px; left: 24%; animation-duration: 14s; animation-delay: 2s; }
+.petal-3 { width: 16px; height: 20px; left: 45%; animation-duration: 10s; animation-delay: 4s; }
+.petal-4 { width: 12px; height: 15px; left: 68%; animation-duration: 13s; animation-delay: 1.5s; }
+.petal-5 { width: 15px; height: 18px; left: 85%; animation-duration: 12s; animation-delay: 3s; }
+.petal-6 { width: 11px; height: 13px; left: 16%; animation-duration: 15s; animation-delay: 5s; }
+.petal-7 { width: 13px; height: 16px; left: 35%; animation-duration: 11s; animation-delay: 7s; }
+.petal-8 { width: 14px; height: 17px; left: 55%; animation-duration: 13s; animation-delay: 6s; }
+.petal-9 { width: 10px; height: 12px; left: 75%; animation-duration: 16s; animation-delay: 4.5s; }
+.petal-10 { width: 12px; height: 15px; left: 92%; animation-duration: 12s; animation-delay: 8s; }
+.petal-11 { width: 15px; height: 19px; left: 3%; animation-duration: 14s; animation-delay: 9s; }
+.petal-12 { width: 11px; height: 14px; left: 50%; animation-duration: 10s; animation-delay: 10s; }
+.petal-13 { width: 13px; height: 16px; left: 62%; animation-duration: 15s; animation-delay: 3.5s; }
+.petal-14 { width: 14px; height: 18px; left: 30%; animation-duration: 12s; animation-delay: 7.5s; }
 
-@keyframes pulseStar {
-  0%, 100% { opacity: 0.2; transform: scale(0.8); }
-  50% { opacity: 0.85; transform: scale(1.4); }
+@keyframes fallPetal {
+  0% {
+    top: -10%;
+    transform: translateX(0) rotate(0deg) scale(0.8);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.75;
+  }
+  85% {
+    opacity: 0.75;
+  }
+  100% {
+    top: 110%;
+    transform: translateX(45px) rotate(360deg) scale(1.1);
+    opacity: 0;
+  }
 }
 
 /* Central Card */
@@ -182,22 +199,22 @@ const openInvitation = async () => {
   position: relative;
   width: 100%;
   max-width: 440px;
-  background: rgba(22, 30, 44, 0.72);
-  border: 1px solid rgba(226, 190, 117, 0.25);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(226, 190, 117, 0.04);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1.5px solid rgba(106, 156, 228, 0.4);
+  box-shadow: 0 20px 50px rgba(49, 133, 242, 0.15), 0 4px 16px rgba(106, 156, 228, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-radius: 28px;
-  padding: 44px 32px 38px;
+  padding: 42px 30px 36px;
   text-align: center;
   z-index: 10;
-  animation: cardFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: cardFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes cardFadeIn {
   from {
     opacity: 0;
-    transform: translateY(28px) scale(0.96);
+    transform: translateY(24px) scale(0.96);
   }
   to {
     opacity: 1;
@@ -206,9 +223,8 @@ const openInvitation = async () => {
 }
 
 .floral-svg {
-  width: 110px;
+  width: 120px;
   height: 26px;
-  color: #e2be75;
   margin: 0 auto 16px;
 }
 
@@ -220,44 +236,44 @@ const openInvitation = async () => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
+  width: 66px;
+  height: 66px;
   border-radius: 50%;
-  border: 1.5px solid rgba(226, 190, 117, 0.45);
-  background: radial-gradient(circle, rgba(226, 190, 117, 0.12) 0%, transparent 80%);
-  box-shadow: 0 0 16px rgba(226, 190, 117, 0.2);
+  border: 1.5px solid #6a9ce4;
+  background: radial-gradient(circle, rgba(196, 226, 248, 0.45) 0%, rgba(255, 255, 255, 0.9) 80%);
+  box-shadow: 0 4px 16px rgba(49, 133, 242, 0.16);
 }
 
 .monogram-text {
-  font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 19px;
-  font-weight: 500;
-  color: #f7e7c4;
+  font-weight: 700;
+  color: var(--color-text-navy);
   letter-spacing: 2px;
 }
 
 .subtitle-tag {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-  font-size: 11.5px;
+  font-family: var(--font-sans);
+  font-size: 11px;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: #d1b479;
-  margin: 0 0 20px;
-  font-weight: 600;
+  color: var(--color-text-muted);
+  margin: 0 0 18px;
+  font-weight: 700;
 }
 
 /* Couple Typography */
 .couple-section {
-  margin-bottom: 28px;
+  margin-bottom: 26px;
 }
 
 .bride-groom {
-  font-family: 'Cinzel', 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 42px;
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.15;
   margin: 0;
-  color: #ffffff;
+  color: var(--color-text-navy);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -266,17 +282,15 @@ const openInvitation = async () => {
 }
 
 .bride-groom .name {
-  background: linear-gradient(135deg, #ffffff 40%, #f1dcab 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--color-text-navy);
+  letter-spacing: 1px;
 }
 
 .bride-groom .ampersand {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-style: italic;
-  font-size: 30px;
-  color: #e2be75;
-  -webkit-text-fill-color: #e2be75;
+  font-size: 32px;
+  color: var(--color-blue-primary);
   margin: 2px 0;
 }
 
@@ -284,7 +298,7 @@ const openInvitation = async () => {
   position: relative;
   width: 140px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(226, 190, 117, 0.6), transparent);
+  background: linear-gradient(90deg, transparent, #6a9ce4, transparent);
   margin: 18px auto 0;
   display: flex;
   align-items: center;
@@ -294,31 +308,34 @@ const openInvitation = async () => {
 .diamond {
   width: 6px;
   height: 6px;
-  background: #e2be75;
+  background: var(--color-blue-primary);
+  box-shadow: 0 0 6px rgba(49, 133, 242, 0.4);
   transform: rotate(45deg);
 }
 
 /* Guest Card */
 .guest-card {
-  background: rgba(13, 20, 30, 0.65);
-  border: 1px solid rgba(226, 190, 117, 0.2);
+  background: linear-gradient(135deg, #f0f7fe 0%, #e5f1fb 100%);
+  border: 1px solid rgba(106, 156, 228, 0.45);
   border-radius: 18px;
   padding: 20px 20px 18px;
-  margin-bottom: 28px;
+  margin-bottom: 26px;
+  box-shadow: 0 4px 14px rgba(49, 133, 242, 0.06);
 }
 
 .guest-salutation {
   font-size: 12px;
-  color: #a0aec0;
+  color: var(--color-text-muted);
   margin: 0 0 8px;
+  font-weight: 500;
   letter-spacing: 0.5px;
 }
 
 .guest-name {
-  font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 20px;
-  font-weight: 600;
-  color: #f7e7c4;
+  font-weight: 700;
+  color: var(--color-text-navy);
   margin: 0 0 10px;
   letter-spacing: 0.5px;
 }
@@ -326,7 +343,7 @@ const openInvitation = async () => {
 .guest-note {
   font-size: 12px;
   line-height: 1.6;
-  color: #cbd5e1;
+  color: var(--color-text-body);
   margin: 0;
 }
 
@@ -347,24 +364,24 @@ const openInvitation = async () => {
   width: 100%;
   max-width: 280px;
   padding: 15px 28px;
-  background: linear-gradient(135deg, #d4af37 0%, #b38b25 100%);
-  color: #1a1a1a;
+  background: linear-gradient(135deg, var(--color-blue-primary) 0%, #1e6acc 100%);
+  color: #ffffff;
   border: none;
   border-radius: 30px;
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 14.5px;
   font-weight: 700;
   letter-spacing: 0.6px;
   cursor: pointer;
-  box-shadow: 0 10px 28px rgba(212, 175, 55, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: 0 10px 26px rgba(49, 133, 242, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
 
 .btn-open-invitation:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 34px rgba(212, 175, 55, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  background: linear-gradient(135deg, #dfbc49 0%, #c1962f 100%);
+  background: linear-gradient(135deg, #3d92fc 0%, #2275dc 100%);
+  box-shadow: 0 14px 32px rgba(49, 133, 242, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .btn-open-invitation:active {
@@ -377,7 +394,7 @@ const openInvitation = async () => {
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
   transform: skewX(-25deg);
   animation: shineLoop 4s infinite;
 }
@@ -390,7 +407,7 @@ const openInvitation = async () => {
 .envelope-icon {
   width: 18px;
   height: 18px;
-  color: #1a1a1a;
+  color: #ffffff;
 }
 
 .btn-label {
@@ -402,15 +419,16 @@ const openInvitation = async () => {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11.5px;
-  color: #94a3b8;
+  font-size: 12px;
+  color: var(--color-text-muted);
   margin: 0;
+  font-weight: 500;
 }
 
 .note-mini-icon {
   width: 13px;
   height: 13px;
-  color: #d4af37;
+  color: var(--color-blue-primary);
 }
 
 @media (max-width: 480px) {

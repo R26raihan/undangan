@@ -32,20 +32,6 @@
             </svg>
             <span class="btn-text">Salin</span>
           </button>
-
-          <a
-            :href="canvaDirectUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="nav-btn btn-external"
-            title="Buka Langsung di Canva"
-            aria-label="Buka Langsung di Canva"
-          >
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-            </svg>
-            <span class="btn-text">Canva</span>
-          </a>
         </div>
       </div>
     </header>
@@ -60,9 +46,8 @@
       </div>
     </transition>
 
-    <!-- Canva Presentation Viewport -->
-    <section class="canva-stage" aria-label="Desain Undangan Canva">
-      <!-- Loading skeleton -->
+    <!-- Invitation Visual Presentation -->
+    <section class="canva-stage" aria-label="Desain Undangan Pernikahan">
       <div v-if="isLoading" class="loader-overlay" aria-live="polite">
         <div class="loader-spinner"></div>
         <p class="loader-text">Memuat Undangan Susi &amp; Aris...</p>
@@ -75,26 +60,26 @@
           loading="lazy"
           allowfullscreen
           allow="fullscreen"
-          title="Susi &amp; Aris Wedding Invitation Canva Embed"
+          title="Susi &amp; Aris Wedding Invitation"
           @load="onIframeLoaded"
         ></iframe>
       </div>
     </section>
 
-    <!-- Footer Fallback Link -->
-    <footer class="bottom-footer">
-      <a
-        :href="canvaDirectUrl"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="fallback-link"
-      >
-        <span>Buka presentasi lengkap di Canva</span>
-        <svg class="arrow-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-        </svg>
-      </a>
-      <p class="copyright">© SUSI &amp; ARIS WEDDING</p>
+    <!-- Save The Date & Wedding Gift Section -->
+    <GiftAndDateSection @copied="showToast" />
+
+    <!-- RSVP & Buku Tamu & Wedding Wishes -->
+    <RsvpSection />
+
+    <!-- Thank You Section -->
+    <footer class="thank-you-footer">
+      <div class="thank-you-box">
+        <h3 class="thank-you-title">Thank You</h3>
+        <p class="thank-you-names">Susi &amp; Aris</p>
+        <p class="thank-you-note">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.</p>
+        <p class="copyright">THE WEDDING OF SUSI &amp; ARIS</p>
+      </div>
     </footer>
   </main>
 </template>
@@ -102,12 +87,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import GiftAndDateSection from '../components/GiftAndDateSection.vue'
+import RsvpSection from '../components/RsvpSection.vue'
 
 const router = useRouter()
 const route = useRoute()
 
 const canvaEmbedUrl = 'https://www.canva.com/design/DAHVCsgsHkM/Hl20CibB1IyQXbp0ZgOhCg/view?embed'
-const canvaDirectUrl = 'https://www.canva.com/design/DAHVCsgsHkM/Hl20CibB1IyQXbp0ZgOhCg/view?utm_content=DAHVCsgsHkM&utm_campaign=designshare&utm_medium=embeds&utm_source=link'
 
 const isLoading = ref(true)
 const toastMessage = ref('')
@@ -147,8 +133,9 @@ const showToast = (msg: string) => {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: #0f172a;
-  color: #f8fafc;
+  background: var(--color-bg-page);
+  color: var(--color-text-navy);
+  padding-bottom: 50px;
 }
 
 /* Header */
@@ -156,10 +143,11 @@ const showToast = (msg: string) => {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(15, 23, 42, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(226, 190, 117, 0.2);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(106, 156, 228, 0.3);
+  box-shadow: 0 2px 10px rgba(49, 133, 242, 0.06);
   padding: 10px 16px;
 }
 
@@ -179,17 +167,17 @@ const showToast = (msg: string) => {
 }
 
 .brand-title {
-  font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: #f7e7c4;
+  color: var(--color-text-navy);
 }
 
 .brand-sub {
   font-size: 10px;
   letter-spacing: 1px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   text-transform: uppercase;
 }
 
@@ -203,22 +191,23 @@ const showToast = (msg: string) => {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 12px;
+  padding: 7px 14px;
   border-radius: 20px;
-  border: 1px solid rgba(226, 190, 117, 0.3);
-  background: rgba(30, 41, 59, 0.7);
-  color: #f1f5f9;
+  border: 1px solid var(--color-blue-soft);
+  background: #f0f7fe;
+  color: var(--color-text-navy);
   font-size: 12.5px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .nav-btn:hover {
-  background: rgba(226, 190, 117, 0.15);
-  border-color: rgba(226, 190, 117, 0.6);
-  color: #f7e7c4;
+  background: var(--color-blue-primary);
+  border-color: var(--color-blue-primary);
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(49, 133, 242, 0.25);
 }
 
 .nav-icon {
@@ -232,24 +221,24 @@ const showToast = (msg: string) => {
   top: 70px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(22, 30, 44, 0.95);
-  border: 1px solid #d4af37;
-  color: #fef08a;
+  background: #ffffff;
+  border: 1.5px solid var(--color-blue-primary);
+  color: var(--color-text-navy);
   padding: 10px 20px;
   border-radius: 30px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 25px rgba(49, 133, 242, 0.2);
   z-index: 99999;
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .check-icon {
   width: 16px;
   height: 16px;
-  color: #4ade80;
+  color: var(--color-blue-primary);
 }
 
 .toast-fade-enter-active,
@@ -263,10 +252,9 @@ const showToast = (msg: string) => {
   transform: translate(-50%, -10px);
 }
 
-/* Canva Stage */
+/* Stage */
 .canva-stage {
   position: relative;
-  flex: 1;
   width: 100%;
   max-width: 860px;
   margin: 0 auto;
@@ -291,8 +279,8 @@ const showToast = (msg: string) => {
 .loader-spinner {
   width: 38px;
   height: 38px;
-  border: 3px solid rgba(212, 175, 55, 0.2);
-  border-top-color: #d4af37;
+  border: 3px solid rgba(106, 156, 228, 0.25);
+  border-top-color: var(--color-blue-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -303,7 +291,7 @@ const showToast = (msg: string) => {
 
 .loader-text {
   font-size: 13px;
-  color: #cbd5e1;
+  color: var(--color-text-muted);
   font-style: italic;
   margin: 0;
 }
@@ -312,13 +300,14 @@ const showToast = (msg: string) => {
   position: relative;
   width: 100%;
   height: 0;
-  /* Original aspect ratio padding from canva export */
   padding-top: 607.2474%;
   overflow: hidden;
   border-radius: 16px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-  background: #ffffff;
-  border: 1px solid rgba(226, 190, 117, 0.2);
+  box-shadow: 0 16px 40px rgba(49, 133, 242, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(106, 156, 228, 0.35);
 }
 
 .canva-wrapper iframe {
@@ -333,45 +322,56 @@ const showToast = (msg: string) => {
   display: block;
 }
 
-/* Bottom Footer */
-.bottom-footer {
-  padding: 24px 16px 40px;
+/* Thank you footer */
+.thank-you-footer {
+  padding: 30px 16px 20px;
   text-align: center;
-  background: #090e17;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 16px;
 }
 
-.fallback-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 20px;
+.thank-you-box {
+  max-width: 440px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 20px;
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  color: #f7e7c4;
-  text-decoration: none;
-  font-size: 13.5px;
+  padding: 28px 20px 20px;
+  border: 1px solid rgba(196, 226, 248, 0.7);
+  box-shadow: 0 6px 20px rgba(83, 128, 174, 0.08);
+}
+
+.thank-you-title {
+  font-family: 'Cormorant Garamond', 'Playfair Display', cursive, serif;
+  font-size: 42px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  font-style: italic;
+  color: var(--color-text-navy);
+  margin: 0 0 6px;
 }
 
-.fallback-link:hover {
-  background: rgba(212, 175, 55, 0.2);
-  border-color: rgba(212, 175, 55, 0.6);
-  transform: translateY(-1px);
+.thank-you-names {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-blue-primary);
+  letter-spacing: 2px;
+  margin: 0 0 14px;
 }
 
-.arrow-ext {
-  width: 15px;
-  height: 15px;
+.thank-you-note {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin: 0 0 18px;
 }
 
 .copyright {
-  font-size: 11px;
-  color: #64748b;
+  font-size: 10.5px;
+  color: #8ea8c7;
   letter-spacing: 1.5px;
-  margin: 16px 0 0;
+  margin: 0;
+  font-weight: 600;
 }
 
 @media (max-width: 640px) {
@@ -380,7 +380,7 @@ const showToast = (msg: string) => {
   }
 
   .nav-btn {
-    padding: 7px 9px;
+    padding: 7px 10px;
   }
 
   .brand-title {

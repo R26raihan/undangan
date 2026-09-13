@@ -15,7 +15,6 @@
       </div>
 
       <div class="music-icon-wrapper">
-        <!-- Equalizer waves if playing, or play icon if paused -->
         <div v-if="isPlaying" class="sound-wave">
           <span class="bar bar-1"></span>
           <span class="bar bar-2"></span>
@@ -55,12 +54,12 @@ const { isPlaying, toggle } = useAudio()
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  border: 1.5px solid rgba(212, 175, 55, 0.4);
-  background: rgba(26, 26, 26, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid #3185f2;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 12px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 8px 24px rgba(49, 133, 242, 0.35), 0 2px 8px rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,8 +70,8 @@ const { isPlaying, toggle } = useAudio()
 
 .music-btn:hover {
   transform: scale(1.08);
-  border-color: rgba(212, 175, 55, 0.8);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), 0 0 18px rgba(212, 175, 55, 0.35);
+  border-color: #1e6acc;
+  box-shadow: 0 10px 28px rgba(49, 133, 242, 0.5);
 }
 
 .music-btn:active {
@@ -83,8 +82,8 @@ const { isPlaying, toggle } = useAudio()
   position: absolute;
   inset: 3px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #333 0%, #1a1a1a 70%, #111 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: radial-gradient(circle at 30% 30%, #1e3a5f 0%, #132742 70%, #0d1a2d 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   overflow: hidden;
   transition: transform 0.5s ease;
 }
@@ -97,15 +96,15 @@ const { isPlaying, toggle } = useAudio()
   position: absolute;
   inset: 4px;
   border-radius: 50%;
-  border: 1px dashed rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.5);
+  border: 1px dashed rgba(196, 226, 248, 0.25);
+  box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.35);
 }
 
 .vinyl-center {
   position: absolute;
   inset: 13px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #d4af37, #997926);
+  background: linear-gradient(135deg, #3185f2, #6a9ce4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -115,7 +114,7 @@ const { isPlaying, toggle } = useAudio()
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #1a1a1a;
+  background: #ffffff;
 }
 
 .music-icon-wrapper {
@@ -130,7 +129,7 @@ const { isPlaying, toggle } = useAudio()
 .icon {
   width: 18px;
   height: 18px;
-  color: #fff;
+  color: #ffffff;
   margin-left: 2px;
 }
 
@@ -180,8 +179,8 @@ const { isPlaying, toggle } = useAudio()
 
 .note {
   position: absolute;
-  color: #d4af37;
-  font-size: 14px;
+  color: #3185f2;
+  font-size: 15px;
   font-weight: bold;
   opacity: 0;
 }
@@ -202,7 +201,7 @@ const { isPlaying, toggle } = useAudio()
     opacity: 0;
   }
   30% {
-    opacity: 0.9;
+    opacity: 0.95;
   }
   100% {
     transform: translate(14px, -24px) scale(1.1);

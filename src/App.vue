@@ -1,17 +1,20 @@
 <template>
-  <div id="wedding-app">
-    <router-view v-slot="{ Component, route }">
-      <transition name="page-fade" mode="out-in">
-        <component :is="Component" :key="route.path" />
-      </transition>
-    </router-view>
+  <MobileGuard>
+    <div id="wedding-app">
+      <router-view v-slot="{ Component, route }">
+        <transition name="page-fade" mode="out-in">
+          <component :is="Component" :key="route.path" />
+        </transition>
+      </router-view>
 
-    <!-- Global Floating Music Controller -->
-    <FloatingMusicPlayer />
-  </div>
+      <!-- Global Floating Music Controller -->
+      <FloatingMusicPlayer />
+    </div>
+  </MobileGuard>
 </template>
 
 <script setup lang="ts">
+import MobileGuard from './components/MobileGuard.vue'
 import FloatingMusicPlayer from './components/FloatingMusicPlayer.vue'
 </script>
 

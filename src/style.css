@@ -1,11 +1,21 @@
 :root {
-  --color-bg-primary: #0d141e;
-  --color-bg-secondary: #162030;
-  --color-gold: #d4af37;
-  --color-gold-light: #f7e7c4;
-  --color-gold-dark: #997926;
-  --color-text-main: #f8fafc;
-  --color-text-muted: #94a3b8;
+  /* Master Color Palette */
+  --color-blue-light: #c4e2f8;
+  --color-blue-primary: #3185f2;
+  --color-blue-soft: #6a9ce4;
+  --color-blue-slate: #5380ae;
+
+  /* Theme Tokens - Matching Canva's Soft Light Sky Blue & White Aesthetic */
+  --color-bg-page: #edf6fd;
+  --color-bg-sky: linear-gradient(180deg, #c4e2f8 0%, #e3f1fc 45%, #f7fbff 100%);
+  --color-card-bg: rgba(255, 255, 255, 0.88);
+  --color-border-subtle: rgba(106, 156, 228, 0.35);
+  --color-border-focus: #3185f2;
+
+  --color-text-navy: #17345c;
+  --color-text-body: #2c4970;
+  --color-text-muted: #5380ae;
+
   --font-serif: 'Cinzel', 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
@@ -22,30 +32,30 @@ html,
 body {
   width: 100%;
   min-height: 100%;
-  background-color: var(--color-bg-primary);
-  color: var(--color-text-main);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-navy);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-/* Custom modern scrollbar */
+/* Custom serene blue scrollbar */
 ::-webkit-scrollbar {
-  width: 7px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0b1019;
+  background: #e1f0fa;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(212, 175, 55, 0.35);
+  background: var(--color-blue-soft);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 175, 55, 0.65);
+  background: var(--color-blue-primary);
 }
 
 button, input, textarea, select {
