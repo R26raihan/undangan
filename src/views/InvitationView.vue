@@ -47,18 +47,39 @@
     </transition>
 
     <div class="invitation-content">
-      <!-- Event Schedule Section (Akad & Resepsi) -->
-      <EventScheduleSection />
+      <!-- Section 1: Ayat Suci QS Ar-Rum 21 -->
+      <section class="section-block">
+        <ArRumSection />
+      </section>
 
-      <!-- Save The Date & Wedding Gift Section -->
-      <GiftAndDateSection @copied="showToast" />
+      <!-- Section 2: Bride & Groom Introduction -->
+      <section class="section-block">
+        <BrideGroomSection />
+      </section>
 
-      <!-- RSVP & Buku Tamu & Wedding Wishes -->
-      <RsvpSection />
+      <!-- Section 3: Event Schedule Section (Akad & Resepsi) -->
+      <section class="section-block">
+        <EventScheduleSection />
+      </section>
+
+      <!-- Section 4: Save The Date -->
+      <section class="section-block">
+        <SaveTheDateSection />
+      </section>
+
+      <!-- Section 5: Wedding Gift -->
+      <section class="section-block">
+        <WeddingGiftSection @copied="showToast" />
+      </section>
+
+      <!-- Section 6: RSVP & Buku Tamu & Wedding Wishes -->
+      <section class="section-block">
+        <RsvpSection />
+      </section>
     </div>
 
-    <!-- Thank You Section -->
-    <footer class="thank-you-footer">
+    <!-- Section 7: Thank You Section -->
+    <footer class="thank-you-footer section-block">
       <div class="thank-you-box">
         <h3 class="thank-you-title">Thank You</h3>
         <p class="thank-you-names">Susi &amp; Aris</p>
@@ -70,16 +91,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import ArRumSection from '../components/ArRumSection.vue'
+import BrideGroomSection from '../components/BrideGroomSection.vue'
 import EventScheduleSection from '../components/EventScheduleSection.vue'
-import GiftAndDateSection from '../components/GiftAndDateSection.vue'
+import SaveTheDateSection from '../components/SaveTheDateSection.vue'
+import WeddingGiftSection from '../components/WeddingGiftSection.vue'
 import RsvpSection from '../components/RsvpSection.vue'
 
 const router = useRouter()
 const route = useRoute()
 
 const toastMessage = ref('')
+let observer: IntersectionObserver | null = null
 
 const goBack = () => {
   router.push({
@@ -104,6 +129,43 @@ const showToast = (msg: string) => {
     toastMessage.value = ''
   }, 2800)
 }
+
+onMounted(() => {
+  document.documentElement.classList.add('ivw-snap-scroll')
+
+  nextTick(() => {
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible')
+          observer?.unobserve(entry.target)
+        }
+      })
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -40px 0px'
+    })
+
+    const blocks = document.querySelectorAll('.section-block')
+    blocks.forEach((el, index) => {
+      // First section is visible right away so the user immediately sees content
+      if (index === 0) {
+        el.classList.add('is-visible')
+      } else {
+        observer?.observe(el)
+      }
+    })
+  })
+})
+
+onUnmounted(() => {
+  document.documentElement.classList.remove('ivw-snap-scroll')
+
+  if (observer) {
+    observer.disconnect()
+    observer = null
+  }
+})
 </script>
 
 <style scoped>
@@ -238,6 +300,16 @@ const showToast = (msg: string) => {
   padding-top: 18px;
   display: flex;
   flex-direction: column;
+}
+
+.section-block {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 /* Thank you footer */

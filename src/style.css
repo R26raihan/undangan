@@ -40,6 +40,11 @@ body {
   overflow-x: hidden;
 }
 
+/* Section-by-section snap scrolling, toggled on while the invitation page is active */
+html.ivw-snap-scroll {
+  scroll-snap-type: y mandatory;
+}
+
 /* Custom serene blue scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
