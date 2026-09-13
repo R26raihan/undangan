@@ -3,6 +3,12 @@
     <header class="dashboard-header">
       <h1 class="dashboard-title">Dashboard Undangan</h1>
       <p class="dashboard-sub">Susi &amp; Aris — RSVP &amp; Ucapan Tamu</p>
+      <button class="btn-refresh" type="button" @click="refreshAll" :disabled="isRefreshing">
+        <svg class="refresh-icon" :class="{ 'is-spinning': isRefreshing }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 0 0 4.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 0 1-15.357-2m15.357 2H15" />
+        </svg>
+        {{ isRefreshing ? 'Memuat...' : 'Refresh Data' }}
+      </button>
     </header>
 
     <transition name="toast-fade">
@@ -140,13 +146,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { db } from '../service/firebase'
-import { collection, onSnapshot, query, orderBy, addDoc, deleteDoc, doc, setDoc, increment, serverTimestamp, type Timestamp } from 'firebase/firestore'
+import { collection, getDocs, query, orderBy, addDoc, deleteDoc, doc, setDoc, increment, serverTimestamp, type Timestamp } from 'firebase/firestore'
 
 const GUESTS_COLLECTION = 'guests_susiaris'
 const WISHES_COLLECTION = 'wishes_susiaris'
 const INVITE_COLLECTION = 'invite_list_susiaris'
+
+const GUESTS_CACHE_KEY = 'dashboard_guests_cache'
+const WISHES_CACHE_KEY = 'dashboard_wishes_cache'
+const INVITES_CACHE_KEY = 'dashboard_invites_cache'
 
 interface RsvpItem {
   id: string
@@ -177,6 +187,7 @@ const isLoadingGuests = ref(true)
 const isLoadingWishes = ref(true)
 const isLoadingInvites = ref(true)
 const isAddingInvite = ref(false)
+const isRefreshing = ref(false)
 const inviteForm = ref({ name: '', phone: '' })
 const toastText = ref('')
 
@@ -199,65 +210,127 @@ const totalHadirPax = computed(() =>
 
 const totalTidakHadir = computed(() => rsvpList.value.filter((item) => item.attendance === 'tidak_hadir').length)
 
-let unsubscribeGuests: (() => void) | null = null
-let unsubscribeWishes: (() => void) | null = null
-let unsubscribeInvites: (() => void) | null = null
+const fetchInvites = async (): Promise<InviteItem[]> => {
+  const inviteQ = query(collection(db, INVITE_COLLECTION), orderBy('createdAt', 'desc'))
+  const snapshot = await getDocs(inviteQ)
+  return snapshot.docs.map((docSnap) => {
+    const data = docSnap.data()
+    return {
+      id: docSnap.id,
+      name: data.name || '',
+      phone: data.phone || ''
+    }
+  })
+}
+
+const fetchGuests = async (): Promise<RsvpItem[]> => {
+  const guestsQ = query(collection(db, GUESTS_COLLECTION), orderBy('createdAt', 'desc'))
+  const snapshot = await getDocs(guestsQ)
+  return snapshot.docs.map((docSnap) => {
+    const data = docSnap.data()
+    return {
+      id: docSnap.id,
+      name: data.name || '',
+      phone: data.phone || '',
+      guests: data.guests || 1,
+      attendance: data.attendance || 'hadir',
+      date: formatDate(data.createdAt)
+    }
+  })
+}
+
+const fetchWishes = async (): Promise<WishItem[]> => {
+  const wishesQ = query(collection(db, WISHES_COLLECTION), orderBy('createdAt', 'desc'))
+  const snapshot = await getDocs(wishesQ)
+  return snapshot.docs.map((docSnap) => {
+    const data = docSnap.data()
+    return {
+      id: docSnap.id,
+      name: data.name || '',
+      message: data.message || '',
+      date: formatDate(data.createdAt)
+    }
+  })
+}
+
+const loadInvites = async (force = false) => {
+  if (!force) {
+    const cached = sessionStorage.getItem(INVITES_CACHE_KEY)
+    if (cached) {
+      inviteList.value = JSON.parse(cached)
+      isLoadingInvites.value = false
+      return
+    }
+  }
+  const data = await fetchInvites()
+  inviteList.value = data
+  sessionStorage.setItem(INVITES_CACHE_KEY, JSON.stringify(data))
+  isLoadingInvites.value = false
+}
+
+const loadGuests = async (force = false) => {
+  if (!force) {
+    const cached = sessionStorage.getItem(GUESTS_CACHE_KEY)
+    if (cached) {
+      rsvpList.value = JSON.parse(cached)
+      isLoadingGuests.value = false
+      return
+    }
+  }
+  const data = await fetchGuests()
+  rsvpList.value = data
+  sessionStorage.setItem(GUESTS_CACHE_KEY, JSON.stringify(data))
+  isLoadingGuests.value = false
+}
+
+const loadWishes = async (force = false) => {
+  if (!force) {
+    const cached = sessionStorage.getItem(WISHES_CACHE_KEY)
+    if (cached) {
+      wishesList.value = JSON.parse(cached)
+      isLoadingWishes.value = false
+      return
+    }
+  }
+  const data = await fetchWishes()
+  wishesList.value = data
+  sessionStorage.setItem(WISHES_CACHE_KEY, JSON.stringify(data))
+  isLoadingWishes.value = false
+}
+
+const showToast = (msg: string) => {
+  toastText.value = msg
+  setTimeout(() => {
+    toastText.value = ''
+  }, 2800)
+}
 
 onMounted(() => {
-  const inviteQ = query(collection(db, INVITE_COLLECTION), orderBy('createdAt', 'desc'))
-  unsubscribeInvites = onSnapshot(inviteQ, (snapshot) => {
-    inviteList.value = snapshot.docs.map((docSnap) => {
-      const data = docSnap.data()
-      return {
-        id: docSnap.id,
-        name: data.name || '',
-        phone: data.phone || ''
-      }
-    })
-    isLoadingInvites.value = false
-  })
-
-  const guestsQ = query(collection(db, GUESTS_COLLECTION), orderBy('createdAt', 'desc'))
-  unsubscribeGuests = onSnapshot(guestsQ, (snapshot) => {
-    rsvpList.value = snapshot.docs.map((docSnap) => {
-      const data = docSnap.data()
-      return {
-        id: docSnap.id,
-        name: data.name || '',
-        phone: data.phone || '',
-        guests: data.guests || 1,
-        attendance: data.attendance || 'hadir',
-        date: formatDate(data.createdAt)
-      }
-    })
-    isLoadingGuests.value = false
-  })
-
-  const wishesQ = query(collection(db, WISHES_COLLECTION), orderBy('createdAt', 'desc'))
-  unsubscribeWishes = onSnapshot(wishesQ, (snapshot) => {
-    wishesList.value = snapshot.docs.map((docSnap) => {
-      const data = docSnap.data()
-      return {
-        id: docSnap.id,
-        name: data.name || '',
-        message: data.message || '',
-        date: formatDate(data.createdAt)
-      }
-    })
-    isLoadingWishes.value = false
-  })
+  loadInvites()
+  loadGuests()
+  loadWishes()
 })
 
-onUnmounted(() => {
-  if (unsubscribeGuests) unsubscribeGuests()
-  if (unsubscribeWishes) unsubscribeWishes()
-  if (unsubscribeInvites) unsubscribeInvites()
-})
+const refreshAll = async () => {
+  isRefreshing.value = true
+  try {
+    await Promise.all([loadInvites(true), loadGuests(true), loadWishes(true)])
+    showToast('Data berhasil diperbarui!')
+  } catch (err) {
+    console.error(err)
+    showToast('Gagal memuat data terbaru.')
+  } finally {
+    isRefreshing.value = false
+  }
+}
 
 const removeRsvp = async (id: string) => {
   const item = rsvpList.value.find((r) => r.id === id)
   if (!confirm('Hapus data RSVP ini?')) return
   await deleteDoc(doc(db, GUESTS_COLLECTION, id))
+
+  rsvpList.value = rsvpList.value.filter((r) => r.id !== id)
+  sessionStorage.setItem(GUESTS_CACHE_KEY, JSON.stringify(rsvpList.value))
 
   if (item) {
     try {
@@ -275,13 +348,8 @@ const removeRsvp = async (id: string) => {
 const removeWish = async (id: string) => {
   if (!confirm('Hapus ucapan ini?')) return
   await deleteDoc(doc(db, WISHES_COLLECTION, id))
-}
-
-const showToast = (msg: string) => {
-  toastText.value = msg
-  setTimeout(() => {
-    toastText.value = ''
-  }, 2800)
+  wishesList.value = wishesList.value.filter((w) => w.id !== id)
+  sessionStorage.setItem(WISHES_CACHE_KEY, JSON.stringify(wishesList.value))
 }
 
 const addInvite = async () => {
@@ -289,11 +357,17 @@ const addInvite = async () => {
   isAddingInvite.value = true
 
   try {
-    await addDoc(collection(db, INVITE_COLLECTION), {
+    const docRef = await addDoc(collection(db, INVITE_COLLECTION), {
       name: inviteForm.value.name.trim(),
       phone: inviteForm.value.phone.trim(),
       createdAt: serverTimestamp()
     })
+    inviteList.value.unshift({
+      id: docRef.id,
+      name: inviteForm.value.name.trim(),
+      phone: inviteForm.value.phone.trim()
+    })
+    sessionStorage.setItem(INVITES_CACHE_KEY, JSON.stringify(inviteList.value))
     inviteForm.value = { name: '', phone: '' }
     showToast('Tamu berhasil ditambahkan ke daftar!')
   } catch (err) {
@@ -307,6 +381,8 @@ const addInvite = async () => {
 const removeInvite = async (id: string) => {
   if (!confirm('Hapus tamu ini dari daftar?')) return
   await deleteDoc(doc(db, INVITE_COLLECTION, id))
+  inviteList.value = inviteList.value.filter((i) => i.id !== id)
+  sessionStorage.setItem(INVITES_CACHE_KEY, JSON.stringify(inviteList.value))
 }
 
 const buildInviteLink = (name: string) => {
@@ -369,7 +445,46 @@ const copyInviteLink = async (name: string) => {
 .dashboard-sub {
   font-size: 12.5px;
   color: var(--color-text-muted);
-  margin: 0;
+  margin: 0 0 12px;
+}
+
+.btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--color-blue-soft);
+  background: #f0f7fe;
+  color: var(--color-text-navy);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-refresh:hover:not(:disabled) {
+  background: var(--color-blue-primary);
+  border-color: var(--color-blue-primary);
+  color: #ffffff;
+}
+
+.btn-refresh:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.refresh-icon {
+  width: 13px;
+  height: 13px;
+}
+
+.refresh-icon.is-spinning {
+  animation: spin-refresh 0.9s linear infinite;
+}
+
+@keyframes spin-refresh {
+  to { transform: rotate(360deg); }
 }
 
 .stats-row {
