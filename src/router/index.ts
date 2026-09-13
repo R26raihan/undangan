@@ -1,11 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CoverView from '../views/CoverView.vue'
+import VideoCoverView from '../views/VideoCoverView.vue'
 import InvitationView from '../views/InvitationView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Cover',
+    component: VideoCoverView,
+  },
+  {
+    path: '/cover-lama',
+    name: 'CoverLama',
     component: CoverView,
   },
   {
