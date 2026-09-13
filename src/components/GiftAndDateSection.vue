@@ -129,28 +129,76 @@
         We are grateful for your presence and prayers. Any gesture of love you wish to share will be received with heartfelt thanks.
       </p>
 
-      <!-- Bank BRI Button -->
-      <button class="gift-account-btn btn-bri" @click="copyAccount('041501019453500', 'BRI')">
-        <div class="bank-tag bank-tag-logo">
-          <img :src="logoBri" alt="BRI" class="bank-logo" />
+      <!-- Bank BRI Card -->
+      <button class="bank-card bank-card-bri" @click="copyAccount(accountNumber, 'BRI')">
+        <span class="card-glow glow-a" aria-hidden="true"></span>
+        <span class="card-glow glow-b" aria-hidden="true"></span>
+
+        <div class="card-top">
+          <span class="card-logo-chip">
+            <img :src="logoBri" alt="BRI" class="card-logo" />
+          </span>
+          <span class="card-tag">Rekening Bank</span>
         </div>
-        <div class="acc-info">
-          <span class="acc-number">041501019453500</span>
-          <span class="acc-owner">A.N Susilawati</span>
+
+        <div class="card-chip-row">
+          <span class="card-chip"></span>
+          <svg class="card-contactless" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 0 1 7.778 0M12 20h.01m-7.08-7.071a10 10 0 0 1 14.142 0M2.929 8.929a15 15 0 0 1 21.213 0" />
+          </svg>
         </div>
-        <span class="copy-badge">Salin</span>
+
+        <div class="card-number">{{ formattedAccountNumber }}</div>
+
+        <div class="card-footer">
+          <div class="card-owner-block">
+            <span class="card-footer-label">Pemilik Rekening</span>
+            <span class="card-footer-value">A.N Susilawati</span>
+          </div>
+          <span class="card-copy-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+            </svg>
+            Salin
+          </span>
+        </div>
       </button>
 
-      <!-- DANA Button -->
-      <button class="gift-account-btn btn-dana" @click="copyAccount('041501019453500', 'DANA')">
-        <div class="bank-tag bank-tag-logo">
-          <img :src="logoDana" alt="DANA" class="bank-logo" />
+      <!-- DANA Card -->
+      <button class="bank-card bank-card-dana" @click="copyAccount(accountNumber, 'DANA')">
+        <span class="card-glow glow-a" aria-hidden="true"></span>
+        <span class="card-glow glow-b" aria-hidden="true"></span>
+
+        <div class="card-top">
+          <span class="card-logo-chip">
+            <img :src="logoDana" alt="DANA" class="card-logo" />
+          </span>
+          <span class="card-tag">E-Wallet</span>
         </div>
-        <div class="acc-info">
-          <span class="acc-number">041501019453500</span>
-          <span class="acc-owner">A.N Susilawati</span>
+
+        <div class="card-chip-row">
+          <span class="card-chip"></span>
+          <svg class="card-contactless" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 0 1 7.778 0M12 20h.01m-7.08-7.071a10 10 0 0 1 14.142 0M2.929 8.929a15 15 0 0 1 21.213 0" />
+          </svg>
         </div>
-        <span class="copy-badge">Salin</span>
+
+        <div class="card-number">{{ formattedAccountNumber }}</div>
+
+        <div class="card-footer">
+          <div class="card-owner-block">
+            <span class="card-footer-label">Pemilik Akun</span>
+            <span class="card-footer-value">A.N Susilawati</span>
+          </div>
+          <span class="card-copy-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+            </svg>
+            Salin
+          </span>
+        </div>
       </button>
 
       <div class="heart-divider bottom-divider">
@@ -163,13 +211,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import logoBri from '../assets/logo-bri.svg'
 import logoDana from '../assets/logo-dana.png'
 
 const emit = defineEmits<{
   (e: 'copied', msg: string): void
 }>()
+
+const accountNumber = '041501019453500'
+
+const formattedAccountNumber = computed(() => {
+  return accountNumber.match(/.{1,4}/g)?.join(' ') || accountNumber
+})
 
 const targetDate = new Date('2026-09-20T08:00:00+07:00').getTime()
 
@@ -248,7 +302,7 @@ onUnmounted(() => {
 }
 
 .card-script-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 28px;
   font-weight: 600;
   color: #17345c;
@@ -289,11 +343,14 @@ onUnmounted(() => {
 
 /* Calendar */
 .calendar-box {
-  background: #fbfdff;
-  border: 1px solid #e1effa;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 14px;
   padding: 14px 10px;
   margin-bottom: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .cal-header {
@@ -419,77 +476,193 @@ onUnmounted(() => {
   color: #3185f2;
 }
 
-.gift-account-btn {
+.bank-card {
+  position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 18px 16px;
+  border: none;
+  border-radius: 16px;
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  margin-bottom: 14px;
+  box-shadow: 0 10px 28px rgba(15, 28, 63, 0.35);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+
+.bank-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(15, 28, 63, 0.45);
+}
+
+.bank-card:active {
+  transform: translateY(0);
+}
+
+.bank-card-bri {
+  background: linear-gradient(135deg, #0f1c3f 0%, #142b5c 55%, #1a3d7a 100%);
+}
+
+.bank-card-dana {
+  background: linear-gradient(135deg, #0b1230 0%, #0d2a63 55%, #0d6fdb 100%);
+}
+
+.card-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(30px);
+  pointer-events: none;
+}
+
+.glow-a {
+  top: -40px;
+  right: -30px;
+  width: 140px;
+  height: 140px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.glow-b {
+  bottom: -40px;
+  left: -30px;
+  width: 140px;
+  height: 140px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.card-top {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: none;
-  color: #ffffff;
-  cursor: pointer;
-  margin-bottom: 12px;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(49, 133, 242, 0.2);
+  margin-bottom: 16px;
 }
 
-.btn-bri {
-  background: linear-gradient(135deg, #6a9ce4 0%, #3185f2 100%);
-}
-
-.btn-dana {
-  background: linear-gradient(135deg, #5380ae 0%, #3185f2 100%);
-}
-
-.gift-account-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(49, 133, 242, 0.35);
-}
-
-.bank-tag {
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-}
-
-.bank-tag-logo {
+.card-logo-chip {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   background: #ffffff;
   border-radius: 8px;
   padding: 6px 10px;
 }
 
-.bank-logo {
-  height: 16px;
+.card-logo {
+  height: 15px;
   width: auto;
   display: block;
 }
 
-.acc-info {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
-
-.acc-number {
-  font-size: 14px;
+.card-tag {
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 1px;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.14);
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.85);
 }
 
-.acc-owner {
-  font-size: 10.5px;
-  opacity: 0.9;
+.card-chip-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
-.copy-badge {
-  background: rgba(255, 255, 255, 0.25);
-  padding: 4px 9px;
-  border-radius: 8px;
-  font-size: 11px;
+.card-chip {
+  position: relative;
+  width: 38px;
+  height: 28px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #f5d78e 0%, #e8b64a 50%, #c98f1f 100%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+.card-chip::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+}
+
+.card-chip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.card-contactless {
+  width: 18px;
+  height: 18px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.card-number {
+  position: relative;
+  z-index: 1;
+  font-family: 'Courier New', monospace;
+  font-size: 17px;
   font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.card-footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.card-owner-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-footer-label {
+  font-size: 8.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 2px;
+}
+
+.card-footer-value {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.card-copy-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.16);
+  padding: 6px 12px;
+  border-radius: 16px;
+  white-space: nowrap;
+}
+
+.card-copy-chip svg {
+  width: 12px;
+  height: 12px;
 }
 </style>

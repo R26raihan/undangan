@@ -10,13 +10,23 @@
       </div>
     </div>
 
-    <!-- Attendance Stats Badges -->
+    <!-- Attendance Stats -->
     <div class="stats-row">
-      <div class="stat-badge badge-hadir">
+      <div class="stat-card stat-card-hadir">
+        <span class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </span>
         <span class="stat-number">{{ totalHadir }}</span>
         <span class="stat-label">Total Hadir</span>
       </div>
-      <div class="stat-badge badge-tidak-hadir">
+      <div class="stat-card stat-card-tidak">
+        <span class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75">
+            <path stroke-linecap="round" d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </span>
         <span class="stat-number">{{ totalTidakHadir }}</span>
         <span class="stat-label">Total Tidak Hadir</span>
       </div>
@@ -335,7 +345,7 @@ onUnmounted(() => {
 }
 
 .script-title {
-  font-family: 'Cinzel', 'Playfair Display', Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 38px;
   font-weight: 500;
   font-style: italic;
@@ -371,37 +381,67 @@ onUnmounted(() => {
   margin-bottom: 22px;
 }
 
-.stat-badge {
+.stat-card {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 4px;
+  padding: 18px 10px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 6px 18px rgba(49, 133, 242, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.stat-icon {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  padding: 16px 10px;
-  border-radius: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(49, 133, 242, 0.15);
+  margin-bottom: 4px;
 }
 
-.badge-hadir {
-  background: linear-gradient(135deg, #6a9ce4 0%, #3185f2 100%);
+.stat-icon svg {
+  width: 16px;
+  height: 16px;
 }
 
-.badge-tidak-hadir {
-  background: linear-gradient(135deg, #6a8fb8 0%, #5380ae 100%);
+.stat-card-hadir .stat-icon {
+  background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
+}
+
+.stat-card-hadir .stat-number {
+  color: #059669;
+}
+
+.stat-card-tidak .stat-icon {
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.35);
+}
+
+.stat-card-tidak .stat-number {
+  color: #64748b;
 }
 
 .stat-number {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1.2;
+  font-family: var(--font-sans);
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.1;
 }
 
 .stat-label {
-  font-size: 11.5px;
-  font-weight: 500;
-  opacity: 0.95;
-  margin-top: 2px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-align: center;
+  letter-spacing: 0.2px;
 }
 
 .form-card {
@@ -416,7 +456,7 @@ onUnmounted(() => {
 }
 
 .card-script-title {
-  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, cursive, serif;
+  font-family: var(--font-serif);
   font-size: 27px;
   font-weight: 600;
   font-style: italic;

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import CoverView from '../views/CoverView.vue'
 import VideoCoverView from '../views/VideoCoverView.vue'
 import InvitationView from '../views/InvitationView.vue'
+import DashboardView from '../views/DashboardView.vue'
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: '/invitation',
     name: 'Invitation',
     component: InvitationView,
+  },
+  {
+    path: '/dashboard-susiaris',
+    name: 'Dashboard',
+    component: DashboardView,
   },
   {
     path: '/:pathMatch(.*)*',

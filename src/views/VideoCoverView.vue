@@ -15,6 +15,11 @@
     <div class="video-overlay" aria-hidden="true"></div>
 
     <div class="cover-content">
+      <div class="guest-chip">
+        <p class="guest-salutation">Kepada Yth. Bapak/Ibu/Saudara/i:</p>
+        <p class="guest-name">{{ guestName }}</p>
+      </div>
+
       <button
         class="btn-open-invitation"
         @click="openInvitation"
@@ -31,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAudio } from '../composables/useAudio'
 import videoSrc from '../assets/video-cover.mp4'
@@ -39,6 +45,14 @@ import posterImg from '../assets/video-cover-poster.jpg'
 const router = useRouter()
 const route = useRoute()
 const { play } = useAudio()
+
+const guestName = computed(() => {
+  const queryVal = route.query.to || route.query.u || route.query.guest || route.query.nama
+  if (typeof queryVal === 'string' && queryVal.trim().length > 0) {
+    return queryVal.trim()
+  }
+  return 'Tamu Undangan'
+})
 
 const openInvitation = async () => {
   await play()
@@ -85,7 +99,38 @@ const openInvitation = async () => {
   width: 100%;
   padding: 24px 20px 56px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.guest-chip {
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 18px;
+  padding: 14px 18px;
+}
+
+.guest-salutation {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 4px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+}
+
+.guest-name {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: 0.4px;
 }
 
 .btn-open-invitation {

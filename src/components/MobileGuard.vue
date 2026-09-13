@@ -205,7 +205,7 @@ onUnmounted(() => {
   border: 1.5px solid #6a9ce4;
   background: rgba(196, 226, 248, 0.45);
   color: #17345c;
-  font-family: 'Cinzel', Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 17px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -274,7 +274,7 @@ onUnmounted(() => {
 }
 
 .barrier-title {
-  font-family: 'Cinzel', Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 24px;
   font-weight: 700;
   color: #17345c;

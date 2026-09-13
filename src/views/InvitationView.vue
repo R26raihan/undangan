@@ -354,7 +354,7 @@ const showToast = (msg: string) => {
 }
 
 .thank-you-title {
-  font-family: 'Cormorant Garamond', 'Playfair Display', cursive, serif;
+  font-family: var(--font-serif);
   font-size: 42px;
   font-weight: 500;
   font-style: italic;
