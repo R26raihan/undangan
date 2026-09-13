@@ -44,16 +44,16 @@
           <p class="full-name-line">Wanda</p>
         </div>
 
-        <!-- Flower Garden Strip -->
-        <div class="garden-row" aria-hidden="true">
-          <img
-            v-for="n in 5"
-            :key="n"
-            :src="imgTulipSingle"
-            alt=""
-            class="garden-tulip"
-          />
-        </div>
+        <span class="ig-badge" aria-label="Instagram Aris">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+            <path d="M16 11.37a4 4 0 1 1-7.914 1.174A4 4 0 0 1 16 11.37z" />
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+          </svg>
+        </span>
+
+        <img :src="imgTulipSprig" alt="" class="sprig-accent sprig-left" aria-hidden="true" />
+        <img :src="imgTulipSprig" alt="" class="sprig-accent sprig-right" aria-hidden="true" />
       </div>
 
       <!-- Bride Card (Susi) -->
@@ -92,16 +92,16 @@
           <p class="full-name-line">Susilawati</p>
         </div>
 
-        <!-- Flower Garden Strip -->
-        <div class="garden-row" aria-hidden="true">
-          <img
-            v-for="n in 5"
-            :key="n"
-            :src="imgTulipSingle"
-            alt=""
-            class="garden-tulip"
-          />
-        </div>
+        <span class="ig-badge" aria-label="Instagram Susi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+            <path d="M16 11.37a4 4 0 1 1-7.914 1.174A4 4 0 0 1 16 11.37z" />
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+          </svg>
+        </span>
+
+        <img :src="imgTulipSprig" alt="" class="sprig-accent sprig-left" aria-hidden="true" />
+        <img :src="imgTulipSprig" alt="" class="sprig-accent sprig-right" aria-hidden="true" />
       </div>
     </div>
   </section>
@@ -113,7 +113,7 @@ import imgBride from '../assets/bride-cewek.png'
 import imgFlowerGarland from '../assets/flower-garland.webp'
 import imgTulipBouquet from '../assets/tulip-bouquet.webp'
 import imgTulipBouquetPearl from '../assets/tulip-bouquet-pearl.webp'
-import imgTulipSingle from '../assets/tulip-single.webp'
+import imgTulipSprig from '../assets/tulip-sprig.webp'
 </script>
 
 <style scoped>
@@ -262,33 +262,6 @@ import imgTulipSingle from '../assets/tulip-single.webp'
   transform: rotate(8deg);
 }
 
-/* Flower Garden Strip */
-.garden-row {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  margin-top: 10px;
-  width: 100%;
-  pointer-events: none;
-}
-
-.garden-tulip {
-  width: 26px;
-  height: auto;
-  margin: 0 -6px;
-  filter: drop-shadow(0 3px 5px rgba(83, 128, 174, 0.15));
-}
-
-.garden-tulip:nth-child(odd) {
-  width: 20px;
-  transform: translateY(5px) rotate(-4deg);
-}
-
-.garden-tulip:nth-child(3n) {
-  width: 32px;
-  transform: rotate(3deg);
-}
-
 /* Full Name */
 .full-name-block {
   min-height: 48px;
@@ -306,6 +279,40 @@ import imgTulipSingle from '../assets/tulip-single.webp'
   color: #17345c;
   margin: 0;
   letter-spacing: 0.3px;
+}
+
+/* Instagram Badge */
+.ig-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  color: #3185f2;
+}
+
+.ig-badge svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* Tulip Sprig Accents (bottom corners) */
+.sprig-accent {
+  position: absolute;
+  bottom: -26px;
+  width: 46px;
+  height: auto;
+  pointer-events: none;
+  z-index: 0;
+  filter: drop-shadow(0 2px 4px rgba(83, 128, 174, 0.15));
+}
+
+.sprig-left {
+  left: -8px;
+}
+
+.sprig-right {
+  right: -8px;
+  transform: scaleX(-1);
 }
 
 @media (max-width: 380px) {
@@ -347,16 +354,9 @@ import imgTulipSingle from '../assets/tulip-single.webp'
     font-size: 17.5px;
   }
 
-  .garden-tulip {
-    width: 20px;
-  }
-
-  .garden-tulip:nth-child(odd) {
-    width: 16px;
-  }
-
-  .garden-tulip:nth-child(3n) {
-    width: 25px;
+  .sprig-accent {
+    bottom: -20px;
+    width: 34px;
   }
 }
 </style>
