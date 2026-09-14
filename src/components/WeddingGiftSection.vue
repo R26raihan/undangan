@@ -49,7 +49,7 @@
       </button>
 
       <!-- DANA Card -->
-      <button class="bank-card bank-card-dana" @click="copyAccount(accountNumber, 'DANA')">
+      <button class="bank-card bank-card-dana" @click="copyAccount(danaaccountNumaber, 'DANA')">
         <span class="card-glow glow-a" aria-hidden="true"></span>
         <span class="card-glow glow-b" aria-hidden="true"></span>
 
@@ -103,6 +103,7 @@ const emit = defineEmits<{
 }>()
 
 const accountNumber = '041501019453500'
+const danaaccountNumaber= '083831208142'
 
 const formattedAccountNumber = computed(() => {
   return accountNumber.match(/.{1,4}/g)?.join(' ') || accountNumber
