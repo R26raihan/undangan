@@ -67,7 +67,7 @@
           </svg>
         </div>
 
-        <div class="card-number">{{ formattedAccountNumber }}</div>
+        <div class="card-number">{{ formattedDanaAccountNumber }}</div>
 
         <div class="card-footer">
           <div class="card-owner-block">
@@ -107,6 +107,10 @@ const danaaccountNumaber= '083831208142'
 
 const formattedAccountNumber = computed(() => {
   return accountNumber.match(/.{1,4}/g)?.join(' ') || accountNumber
+})
+
+const formattedDanaAccountNumber = computed(() => {
+  return danaaccountNumaber.match(/.{1,4}/g)?.join(' ') || danaaccountNumaber
 })
 
 const copyAccount = async (number: string, bank: string) => {
